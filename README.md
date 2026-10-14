@@ -1,19 +1,24 @@
-# CodeKids
+# CodeKids — Complete Learning Platform
 
-A browser-based coding learning platform with staged lessons, saved learner progress, projects, games, achievements, a safe simulated Builder Terminal, and the integrated Code Studio.
+A beginner-friendly coding platform for learners, including step-by-step lessons, progress tracking, games, project ideas, a multi-file web Code Studio, live preview, browser-based Python support, and a virtual command-line terminal.
+
+## Publish to GitHub Pages
+1. Download and unzip this project.
+2. Open your existing `codekids` repository on GitHub.
+3. Choose **Add file → Upload files**.
+4. Upload `index.html` and `README.md` from this folder, replacing the existing files when prompted.
+5. Commit directly to the `main` branch.
+6. Wait for GitHub Pages to finish deploying, then refresh your site.
+
+Keep GitHub Pages set to deploy from `main` and the `/ (root)` folder.
+
+## Terminal learning lab
+The terminal simulates a small virtual filesystem. It supports common learning commands including `pwd`, `ls`, `cd`, `tree`, `mkdir`, `touch`, `cat`, `less`, `head`, `tail`, `echo`, `printf`, `grep`, `find`, `wc`, `rm`, `rmdir`, `cp`, `mv`, `history`, `clear`, `whoami`, `hostname`, `uname`, `date`, `env`, `which`, `help`, `man`, `about`, and `run`. It also supports basic `>` and `>>` output redirection.
+
+**Important:** This is an educational simulation, not a real shell. It cannot run every Windows/Linux/macOS command, install packages, use `sudo`, or access/modify files on the learner's computer. That is deliberate: a browser page should not pretend to provide unrestricted local terminal access. Commands and files are stored in browser local storage on that device.
 
 ## Code Studio
-- File explorer for local project files.
-- HTML/CSS/JavaScript editor with a sandboxed live preview.
-- Saves workspace files in the browser on the learner's device.
-- Download project files to keep a copy.
-- Optional Python playground powered by Pyodide in a Web Worker. The first Python run needs an internet connection to load the runtime from its CDN.
+Code Studio provides a local browser workspace for HTML/CSS/JavaScript with live preview and local browser storage. Python execution uses Pyodide from a CDN and needs an internet connection when the runtime loads. Browser storage is per browser/device; it is not cloud synchronization.
 
-## Publish with GitHub Pages
-Upload `index.html` and `README.md` to the root of the existing repository and commit to the `main` branch. Keep GitHub Pages configured to deploy from `main` and `/(root)`.
-
-## Important safety notes
-The CodeKids terminal remains a simulated educational terminal and does not run operating-system commands. Web projects run in a sandboxed iframe. Python runs in a browser worker through Pyodide; it is not a server-side execution service and should not be treated as a hardened environment for untrusted production workloads.
-
-## Storage
-Learning progress and workspace files are saved in the browser's local storage on the current device/browser. Learners should download their project files to back them up or move them to another device.
+## Privacy and safety
+Learner progress and workspace files are stored locally in the browser. Clearing site data can remove this local information. Do not enter passwords or private information into learning exercises.

@@ -119,8 +119,8 @@ for number in range(1, 4):
 
 <section class="page" id="page-terminal">
   <h1 class="section-title" style="margin-top:0">Builder Terminal ⌨️</h1>
-  <p>For curious coders ready to experiment. This is a safe learning terminal, not access to your computer. Try commands, inspect your project workspace, and run simple CodeKids examples.</p>
-  <div class="panel" style="margin:14px 0"><b>Challenge:</b> Type <code>help</code> to see what you can do. Then try <code>ls</code>, <code>about</code>, or <code>run</code>.</div>
+  <p>Learn the command line with a realistic, safe virtual computer. Practice folders, files, navigation, searching, and command pipelines before trying a real terminal on your own computer.</p>
+  <div class="panel" style="margin:14px 0"><b>Mission:</b> Type <code>help</code>, then try <code>pwd</code>, <code>ls</code>, <code>cd projects</code>, and <code>cat README.md</code>. This terminal changes only its virtual practice files, never files on your actual computer.</div>
   <div class="terminal-window">
     <div class="terminal-top"><div class="terminal-dots"><i></i><i></i><i></i></div><strong>codekids@workspace: ~</strong><button onclick="clearTerminal()" style="background:transparent;color:#d8e8ff;font-weight:800">Clear</button></div>
     <div class="terminal-screen" id="terminalScreen" role="log" aria-live="polite"><span class="terminal-line">Welcome to CodeKids Builder Terminal!</span>
@@ -129,9 +129,9 @@ This is a simulated terminal designed for safe learning.</div>
     <form class="terminal-form" onsubmit="submitTerminal(event)"><span>kid@codekids:~$</span><input id="terminalInput" autocomplete="off" spellcheck="false" aria-label="Terminal command" placeholder="Type a command, e.g. help"><button type="submit">Run ↵</button></form>
   </div>
   <div class="terminal-help">
-    <button onclick="quickTerminal('help')">help</button><button onclick="quickTerminal('ls')">ls</button><button onclick="quickTerminal('about')">about</button><button onclick="quickTerminal('cat README.md')">cat README.md</button><button onclick="quickTerminal('run')">run</button><button onclick="quickTerminal('clear')">clear</button>
+    <button onclick="quickTerminal('help')">help</button><button onclick="quickTerminal('pwd')">pwd</button><button onclick="quickTerminal('ls -la')">ls -la</button><button onclick="quickTerminal('cd projects')">cd projects</button><button onclick="quickTerminal('tree')">tree</button><button onclick="quickTerminal('cat README.md')">cat README.md</button><button onclick="quickTerminal('mkdir my-project')">mkdir my-project</button><button onclick="quickTerminal('history')">history</button><button onclick="quickTerminal('clear')">clear</button>
   </div>
-  <div class="panel"><h2>🧠 Gifted coder missions</h2><p>1. Use <code>help</code> to discover commands.</p><p>2. Use <code>ls</code> to inspect the sample workspace.</p><p>3. Edit a program in Practice, then return here and type <code>run</code>.</p><p>4. Invent a new command idea and write down what it should do in your project notes.</p><button class="primary" onclick="showPage('practice')">Open coding playground →</button></div>
+  <div class="panel"><h2>🧠 Gifted coder missions</h2><p>1. Navigate: <code>pwd</code>, <code>ls</code>, <code>cd projects</code>, <code>cd ..</code>.</p><p>2. Create a folder and file: <code>mkdir mission</code>, <code>cd mission</code>, <code>touch plan.txt</code>.</p><p>3. Write and read: <code>echo "Build a robot" &gt; plan.txt</code>, <code>cat plan.txt</code>.</p><p>4. Search and inspect: <code>grep robot plan.txt</code>, <code>wc plan.txt</code>, <code>tree</code>.</p><p>5. Use <code>help</code> for the full supported command list. This is a teaching simulator, not a complete Windows/Linux shell.</p><button class="primary" onclick="showPage('practice')">Open coding playground →</button></div>
 </section>
 <section class="page" id="page-projects">
 <h1 class="section-title" style="margin-top:0">Project Workshop 🛠️</h1><p>Build something that feels like you. Choose a project to get a starter idea.</p>
@@ -242,56 +242,72 @@ function memoryGame(){const seq=['🟦','🟨','🟩'];document.getElementById('
 function memoryAnswer(){document.getElementById('memoryFeedback').innerHTML='Now say it out loud in the same order: 🟦 🟨 🟩. <br>Great memory practice!'}
 function rps(choice){const opts=['Rock','Paper','Scissors'],comp=opts[Math.floor(Math.random()*3)];let result=choice===comp?'It’s a tie!':((choice==='Rock'&&comp==='Scissors')||(choice==='Paper'&&comp==='Rock')||(choice==='Scissors'&&comp==='Paper'))?'You win! 🎉':'Computer wins this round!';document.getElementById('rpsResult').textContent='You: '+choice+' · Computer: '+comp+' — '+result}
 function setChallenge(){showPage('practice');document.getElementById('codeInput2').value='print("Alex")\\nprint("Alex")\\nprint("Alex")\\nprint("Alex")\\nprint("Alex")'.replaceAll('Alex',state.name);toast('Starter challenge loaded. Try it!')}
+// Educational shell simulator. Commands operate on a virtual file system only.
 const terminalHistory=[];
-function terminalWrite(text,kind='output'){
- const screen=document.getElementById('terminalScreen');if(!screen)return;
- const line=document.createElement('div');line.className=kind==='command'?'terminal-prompt':'terminal-line';line.textContent=text;screen.appendChild(line);screen.scrollTop=screen.scrollHeight;
-}
+const terminalRoot={type:'dir',children:{
+ 'README.md':{type:'file',content:'# My CodeKids Workspace\nGoal: make something useful, creative, or surprising.\nSteps: plan -> code -> test -> improve -> share.\n'},
+ 'main.py':{type:'file',content:'print("Hello from CodeKids!")\n'},
+ 'ideas.txt':{type:'file',content:'Build a game\nCreate a website\nInvent a robot\n'},
+ 'projects':{type:'dir',children:{'starter.html':{type:'file',content:'<!doctype html>\n<h1>Hello, world!</h1>\n'},'todo.txt':{type:'file',content:'[ ] Plan my project\n[ ] Write code\n[ ] Test it\n'}}},
+ 'school':{type:'dir',children:{'notes.txt':{type:'file',content:'Remember: practice makes progress.\n'}}}
+}};
+let terminalCwd=[];
+function terminalPath(parts=terminalCwd){return '/home/kid'+(parts.length?'/'+parts.join('/'):'')}
+function terminalNode(parts=terminalCwd){let n=terminalRoot;for(const part of parts){if(!n||n.type!=='dir'||!n.children[part])return null;n=n.children[part]}return n}
+function terminalParent(parts){return terminalNode(parts.slice(0,-1))}
+function terminalWrite(text,kind='output'){const screen=document.getElementById('terminalScreen');if(!screen)return;const line=document.createElement('div');line.className=kind==='command'?'terminal-prompt':'terminal-line';line.textContent=String(text);screen.appendChild(line);screen.scrollTop=screen.scrollHeight;}
 function clearTerminal(){const screen=document.getElementById('terminalScreen');if(screen)screen.textContent='Terminal cleared. Type help to see commands.';}
-function quickTerminal(cmd){const input=document.getElementById('terminalInput');if(input)input.value=cmd;runTerminalCommand(cmd);}
-function submitTerminal(event){event.preventDefault();const input=document.getElementById('terminalInput');if(!input)return;const cmd=input.value.trim();if(!cmd)return;terminalWrite('kid@codekids:~$ '+cmd,'command');input.value='';runTerminalCommand(cmd);}
+function quickTerminal(cmd){const input=document.getElementById('terminalInput');if(input)input.value=cmd;terminalWrite('kid@codekids:'+terminalPath().replace('/home/kid','~')+'$ '+cmd,'command');runTerminalCommand(cmd);}
+function submitTerminal(event){event.preventDefault();const input=document.getElementById('terminalInput');if(!input)return;const cmd=input.value.trim();if(!cmd)return;terminalHistory.push(cmd);terminalWrite('kid@codekids:'+terminalPath().replace('/home/kid','~')+'$ '+cmd,'command');input.value='';runTerminalCommand(cmd);}
+function shellWords(str){const out=[];const re=/"([^"\\]*(?:\\.[^"\\]*)*)"|'([^']*)'|(\S+)/g;let m;while((m=re.exec(str))!==null)out.push(m[1]!==undefined?m[1].replace(/\\"/g,'"'):m[2]!==undefined?m[2]:m[3]);return out;}
+function resolveTerminalPath(path){if(!path||path==='~')return [];let parts=path.startsWith('/')?[]:terminalCwd.slice();if(path.startsWith('/home/kid'))parts=[];else if(path.startsWith('~'))parts=[];const raw=path.startsWith('/home/kid')?path.slice(9):path.startsWith('~')?path.slice(1):path;for(const bit of raw.split('/')){if(!bit||bit==='.')continue;if(bit==='..')parts.pop();else parts.push(bit)}return parts;}
+function terminalRead(path){const parts=resolveTerminalPath(path);const n=terminalNode(parts);return n&&n.type==='file'?n.content:null;}
+function terminalSet(path,content,append=false){const parts=resolveTerminalPath(path);if(!parts.length)return 'Cannot overwrite the workspace root.';const name=parts.pop(),par=terminalNode(parts);if(!par||par.type!=='dir')return 'No such directory: '+terminalPath(parts);if(par.children[name]&&par.children[name].type==='dir')return 'Is a directory: '+name;if(!par.children[name])par.children[name]={type:'file',content:''};par.children[name].content=append?par.children[name].content+content:content;return null;}
+function terminalMkdir(path){const parts=resolveTerminalPath(path);if(!parts.length)return 'Cannot create the root folder.';const name=parts.pop(),par=terminalNode(parts);if(!par||par.type!=='dir')return 'Parent directory does not exist.';if(par.children[name])return 'Already exists: '+name;par.children[name]={type:'dir',children:{}};return null;}
+function terminalTree(node,prefix=''){let lines=[];for(const [name,item] of Object.entries(node.children||{})){lines.push(prefix+(item.type==='dir'?'📁 ':'📄 ')+name);if(item.type==='dir')lines=lines.concat(terminalTree(item,prefix+'  '));}return lines;}
+function terminalFind(node,needle,path=''){let lines=[];for(const [name,item] of Object.entries(node.children||{})){const p=path+'/'+name;if(name.includes(needle))lines.push(p);if(item.type==='dir')lines=lines.concat(terminalFind(item,needle,p));}return lines;}
 function runTerminalCommand(raw){
- const cmd=raw.trim();const lower=cmd.toLowerCase();
- if(lower==='clear'){clearTerminal();return}
- if(lower==='help'){
-  terminalWrite('Available commands:');
-  terminalWrite('  help          Show this command list');
-  terminalWrite('  ls            List sample workspace files');
-  terminalWrite('  pwd           Show the virtual workspace path');
-  terminalWrite('  about         Explain this safe learning terminal');
-  terminalWrite('  cat README.md Read the sample project notes');
-  terminalWrite('  run           Open the CodeKids Practice playground');
-  terminalWrite('  date          Show today’s date');
-  terminalWrite('  clear         Clear terminal output');
-  terminalWrite('  whoami        Show your demo username');
-  terminalWrite('  echo words    Print your words');
-  terminalWrite('This is a simulated terminal: it cannot access your device or run arbitrary shell commands.');
- }else if(lower==='ls'){
-  terminalWrite('README.md   main.py   ideas.txt   projects/');
- }else if(lower==='pwd'){
-  terminalWrite('/home/kid/codekids');
- }else if(lower==='about'){
-  terminalWrite('CodeKids Builder Terminal v1.0');
-  terminalWrite('A safe simulated command line for learning how developer tools work.');
-  terminalWrite('For code practice, use the built-in Practice playground.');
- }else if(lower==='cat readme.md'){
-  terminalWrite('# My CodeKids Workspace');
-  terminalWrite('Goal: make something useful, creative, or surprising.');
-  terminalWrite('Steps: plan -> code -> test -> improve -> share.');
- }else if(lower==='date'){
-  terminalWrite(new Date().toLocaleDateString());
- }else if(lower==='run'){
-  terminalWrite('Opening the Practice playground. Press Run there to execute supported beginner examples.');
-  showPage('practice');
- }else if(lower==='whoami'){
-  terminalWrite('young-coder');
- }else if(lower.startsWith('echo ')){
-  terminalWrite(cmd.slice(5));
- }else{
-  terminalWrite('Command not found: '+cmd);
-  terminalWrite('Try help. This learning terminal only supports its listed safe commands.');
+ const trimmed=raw.trim();if(!trimmed)return;
+ if(trimmed==='clear'){clearTerminal();return;}
+ // Basic output redirection: command > file and command >> file.
+ const redir=trimmed.match(/^(.*?)\s*(>>|>)\s*(.+)$/);if(redir){const left=redir[1].trim(),target=redir[3].trim().replace(/^['"]|['"]$/g,'');let output='';const oldWrite=terminalWrite;const capture=[];terminalWrite=(v)=>capture.push(String(v));try{runTerminalCommand(left);output=capture.join('\n')+(capture.length?'\n':'');}finally{terminalWrite=oldWrite;}const err=terminalSet(target,output,redir[2]==='>>');if(err)terminalWrite(err);else terminalWrite('Wrote '+output.length+' characters to '+target);return;}
+ const args=shellWords(trimmed),cmd=(args.shift()||'').toLowerCase();const arg=args[0];const node=terminalNode();
+ switch(cmd){
+ case 'help':case 'man':terminalWrite('CODEKIDS LEARNING SHELL — supported commands');terminalWrite('Navigation: pwd, ls [-a] [-l], cd PATH, tree');terminalWrite('Files: cat FILE, less FILE, head FILE, tail FILE, touch FILE, mkdir DIR, rm FILE, rmdir DIR, cp SRC DEST, mv SRC DEST');terminalWrite('Text/search: echo WORDS, printf WORDS, grep TEXT FILE, find [PATH] -name NAME, wc FILE');terminalWrite('Info/tools: help, man, clear, history, whoami, hostname, uname, date, env, which COMMAND, about, run');terminalWrite('Redirection: echo hello > file.txt   |   echo again >> file.txt');terminalWrite('Paths support . , .. , ~, and /home/kid. Quotes keep spaces together. Files are virtual and reset if browser storage is cleared.');terminalWrite('Not implemented: arbitrary OS commands, package installs, sudo, network tools, or access to your real computer.');break;
+ case 'pwd':terminalWrite(terminalPath());break;
+ case 'whoami':terminalWrite('young-coder');break;
+ case 'hostname':terminalWrite('codekids-virtual-lab');break;
+ case 'uname':terminalWrite(args.includes('-a')?'CodeKids VirtualLab browser-simulator 1.0 learning-shell':'CodeKidsVirtualLab');break;
+ case 'date':terminalWrite(new Date().toString());break;
+ case 'about':terminalWrite('CodeKids Virtual Lab — a command-line learning simulator. All file operations happen in this browser-based virtual filesystem.');break;
+ case 'env':terminalWrite('USER=young-coder');terminalWrite('HOME=/home/kid');terminalWrite('SHELL=codekids-learning-shell');break;
+ case 'which':terminalWrite(['cd','pwd','ls','cat','mkdir','touch','rm','cp','mv','echo','grep','find','tree','wc','head','tail','clear','python'].includes(arg)?'/usr/bin/'+arg:'No simulated executable found: '+(arg||''));break;
+ case 'cd':{const dest=arg||'~',parts=resolveTerminalPath(dest),target=terminalNode(parts);if(target&&target.type==='dir'){terminalCwd=parts;const prompt=document.querySelector('.terminal-top strong');if(prompt)prompt.textContent='codekids@workspace: '+(terminalPath()==='/home/kid'?'~':terminalPath().replace('/home/kid/','~/'));}else terminalWrite('cd: no such directory: '+dest);break;}
+ case 'ls':{let targetPath='.';for(const a of args)if(!a.startsWith('-'))targetPath=a;const target=terminalNode(resolveTerminalPath(targetPath));if(!target)terminalWrite('ls: cannot access '+targetPath+': No such file or directory');else if(target.type==='file')terminalWrite(targetPath);else{let names=Object.entries(target.children).filter(([n])=>args.includes('-a')||!n.startsWith('.')).map(([n,v])=>args.includes('-l')?(v.type==='dir'?'drwxr-xr-x':'-rw-r--r--')+'  '+n+(v.type==='dir'?'/':''):n+(v.type==='dir'?'/':''));terminalWrite(names.join(args.includes('-l')?'\n':'   ')||'(empty directory)');}break;}
+ case 'tree':terminalWrite('.');terminalTree(node).forEach(x=>terminalWrite(x));break;
+ case 'mkdir':{if(!arg){terminalWrite('mkdir: missing directory name');break}const err=terminalMkdir(arg);terminalWrite(err||'Created directory: '+arg);break;}
+ case 'touch':{if(!arg){terminalWrite('touch: missing file name');break}const parts=resolveTerminalPath(arg),name=parts.pop(),par=terminalNode(parts);if(!par||par.type!=='dir')terminalWrite('touch: parent directory not found');else if(par.children[name]?.type==='dir')terminalWrite('touch: is a directory');else{if(!par.children[name])par.children[name]={type:'file',content:''};terminalWrite('Created/updated file: '+arg)}break;}
+ case 'cat':case 'less':{if(!arg){terminalWrite(cmd+': missing file name');break}const content=terminalRead(arg);if(content===null)terminalWrite(cmd+': '+arg+': No such file');else terminalWrite(content.replace(/\n$/,''));break;}
+ case 'head':case 'tail':{const file=args.find(a=>!a.startsWith('-'));const content=file?terminalRead(file):null;if(content===null){terminalWrite(cmd+': file not found');break}const lines=content.split('\n').filter((x,i,a)=>i<a.length-1||x);terminalWrite((cmd==='head'?lines.slice(0,10):lines.slice(-10)).join('\n'));break;}
+ case 'echo':case 'printf':terminalWrite(args.join(' '));break;
+ case 'wc':{const content=arg?terminalRead(arg):null;if(content===null){terminalWrite('wc: file not found');break}const lines=content?content.split('\n').filter((x,i,a)=>i<a.length-1||x).length:0;terminalWrite(lines+' lines, '+content.trim().split(/\s+/).filter(Boolean).length+' words, '+content.length+' characters  '+arg);break;}
+ case 'grep':{const needle=args[0],file=args[1],content=file?terminalRead(file):null;if(!needle||content===null){terminalWrite('Usage: grep TEXT FILE');break}const matches=content.split('\n').filter(line=>line.toLowerCase().includes(needle.toLowerCase()));terminalWrite(matches.join('\n')||'No matches found.');break;}
+ case 'find':{let path='.',name='';if(args[0]&&args[0]!=='-name')path=args[0];const i=args.indexOf('-name');if(i>=0)name=(args[i+1]||'').replace(/^['"]|['"]$/g,'');const base=terminalNode(resolveTerminalPath(path));if(!base){terminalWrite('find: path not found');break}const results=terminalFind(base,name||'');terminalWrite(results.join('\n')||'No matches found.');break;}
+ case 'rm':{if(!arg){terminalWrite('rm: missing file name');break}const parts=resolveTerminalPath(arg),name=parts.pop(),par=terminalNode(parts);if(!par||!par.children[name])terminalWrite('rm: cannot remove: no such file');else if(par.children[name].type==='dir'&&!args.includes('-r')&&!args.includes('-rf'))terminalWrite('rm: '+arg+': is a directory (use rm -r for this virtual folder)');else{delete par.children[name];terminalWrite('Removed '+arg)}break;}
+ case 'rmdir':{if(!arg){terminalWrite('rmdir: missing directory name');break}const parts=resolveTerminalPath(arg),name=parts.pop(),par=terminalNode(parts);if(!par||!par.children[name]||par.children[name].type!=='dir')terminalWrite('rmdir: directory not found');else if(Object.keys(par.children[name].children).length)terminalWrite('rmdir: directory not empty');else{delete par.children[name];terminalWrite('Removed directory '+arg)}break;}
+ case 'cp':case 'mv':{const src=args[0],dest=args[1];if(!src||!dest){terminalWrite('Usage: '+cmd+' SOURCE DEST');break}const sp=resolveTerminalPath(src),sn=sp.pop(),sparent=terminalNode(sp),dp=resolveTerminalPath(dest);let dn=dp.pop(),dparent=terminalNode(dp);if(!sparent||!sparent.children[sn]){terminalWrite(cmd+': source not found');break}if(dparent&&dparent.type==='dir'){dparent.children[sn]=JSON.parse(JSON.stringify(sparent.children[sn]));dn=sn;}else{if(!dparent){const maybe=terminalNode(resolveTerminalPath(dest));if(maybe&&maybe.type==='dir'){dparent=maybe;dn=sn;}}if(!dparent){const destParent=terminalNode(dp);if(!destParent){terminalWrite(cmd+': destination folder not found');break}dparent=destParent;}dparent.children[dn]=JSON.parse(JSON.stringify(sparent.children[sn]));}if(cmd==='mv')delete sparent.children[sn];terminalWrite((cmd==='cp'?'Copied ':'Moved ')+src+' → '+dest);break;}
+ case 'history':terminalHistory.forEach((h,i)=>terminalWrite((i+1)+'  '+h));if(!terminalHistory.length)terminalWrite('No commands yet.');break;
+ case 'clear':clearTerminal();break;
+ case 'run':terminalWrite('Opening the Practice playground. Use its Run button for supported beginner examples.');showPage('practice');break;
+ case 'python':terminalWrite('This terminal does not launch system Python. Open Code Studio to try the browser-based Python runner (internet required).');break;
+ case 'sudo':terminalWrite('sudo is intentionally unavailable in this child-friendly simulator.');break;
+ case '':break;
+ default:terminalWrite(cmd+': command not found');terminalWrite('Type help to see supported commands.');
  }
+ try{localStorage.setItem('codekids-terminal-fs',JSON.stringify(terminalRoot));}catch(e){}
 }
+(function restoreTerminalFS(){try{const saved=JSON.parse(localStorage.getItem('codekids-terminal-fs')||'null');if(saved&&saved.type==='dir'&&saved.children)Object.assign(terminalRoot,saved);}catch(e){}})();
+
 function resetProgress(){if(confirm('Reset your CodeKids demo progress on this device?')){localStorage.removeItem('codekids-state');state={...defaultState};persist();toast('Demo progress reset.')}}
 
 // Code Studio: local multi-file web projects and browser-isolated Python.
