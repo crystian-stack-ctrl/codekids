@@ -22,3 +22,6 @@ Code Studio provides a local browser workspace for HTML/CSS/JavaScript with live
 
 ## Privacy and safety
 Learner progress and workspace files are stored locally in the browser. Clearing site data can remove this local information. Do not enter passwords or private information into learning exercises.
+
+## 50-stage learning path
+The learning path now contains 50 sequential stages spanning Python fundamentals, data structures, functions, file handling, terminal navigation commands, HTML, CSS, JavaScript, Git, and a final project. Progress is stored in the learner’s browser. The terminal lessons explain real command concepts; the website simulator does not execute arbitrary commands on the learner’s computer.
