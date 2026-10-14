@@ -373,7 +373,65 @@ if(/error|bug|debug/.test(q))return 'Bugs in code are mistakes, not actual beetl
 if(/algorithm/.test(q))return 'An algorithm is a set of steps for solving a problem. 🥪 A sandwich algorithm might be: get bread, add filling, close sandwich, eat (optional but recommended!). Computers follow precise steps too.';
 if(/help|what can you do|topics/.test(q))return 'I can help with beginner Python, variables, print(), loops, functions, HTML/CSS/JavaScript, terminal commands, fractions, and simple arithmetic. 🤖 Try asking one specific question. My brain is a starter set of robot gears, not a live all-knowing AI yet!';
 return 'Hmm… my tiny robot gears are spinning! ⚙️ I do not know that one yet. Try asking about Python, variables, loops, HTML, CSS, terminal commands, fractions, or a maths sum like “12 × 8”. I will keep learning new built-in explanations as CodeKids grows!';}
-function sendChat(e){e.preventDefault();const input=document.getElementById('chatInput');const q=input.value.trim();if(!q)return;addChatBubble(q,'kid');input.value='';addChatBubble(codeyAnswer(q),'bot');}
+
+const CODEY_API_URL = 'https://codey-ai-tutor.jaronlabour.workers.dev/';
+
+async function sendChat(e) {
+  e.preventDefault();
+
+  const input = document.getElementById('chatInput');
+  const question = input.value.trim();
+
+  if (!question) return;
+
+  addChatBubble(question, 'kid');
+  input.value = '';
+
+  const log = document.getElementById('chatLog');
+  const bubble = document.createElement('div');
+  bubble.className = 'chat-bubble bot';
+  bubble.textContent = '🤖 Beep boop! My robot brain is thinking...';
+  log.appendChild(bubble);
+  log.scrollTop = log.scrollHeight;
+
+  try {
+    const response = await fetch(CODEY_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        question: question,
+        message: question
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Codey could not answer right now.');
+    }
+
+    const answer =
+      typeof data === 'string'
+        ? data
+        : data.answer || data.response || data.reply || data.result;
+
+    if (!answer) {
+      throw new Error(data.error || 'Codey returned an unexpected response.');
+    }
+
+    bubble.textContent = answer;
+  } catch (error) {
+    console.error('Codey connection error:', error);
+    bubble.textContent =
+      'Oops-a-doodle! 🤖 I could not reach my AI brain. ' +
+      'Please try again in a moment!';
+  }
+
+  log.scrollTop = log.scrollHeight;
+}
+
 
 updateStats();
 renderStageCards();
