@@ -25,3 +25,9 @@ Learner progress and workspace files are stored locally in the browser. Clearing
 
 ## 50-stage learning path
 The learning path now contains 50 sequential stages spanning Python fundamentals, data structures, functions, file handling, terminal navigation commands, HTML, CSS, JavaScript, Git, and a final project. Progress is stored in the learner’s browser. The terminal lessons explain real command concepts; the website simulator does not execute arbitrary commands on the learner’s computer.
+
+
+## Codey Chatbot
+The Codey Chatbot is a child-friendly, rule-based helper for beginner coding concepts and common maths questions. It works locally in the browser and does not send chat messages to a server. It is not connected to a live AI model and cannot answer every possible question; unknown questions receive suggestions for supported topics. Never ask learners to share passwords, home addresses, phone numbers, or other private information.
+
+To publish: upload `index.html` and `README.md` to the root of your existing GitHub Pages repository, replacing the previous versions, and commit to the `main` branch. Keep a backup of your previous files. After Pages deploys, hard-refresh the website with Ctrl+Shift+R.

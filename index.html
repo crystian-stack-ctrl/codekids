@@ -21,6 +21,18 @@
 @media(max-width:1150px){.dashboard{grid-template-columns:1fr}.rightcol{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}.journeys{grid-template-columns:repeat(3,minmax(0,1fr))}.hero-art{font-size:90px}}
 @media(max-width:760px){.topbar{padding:0 14px}.brand{font-size:22px}.layout{grid-template-columns:1fr}.sidebar{position:sticky;top:78px;z-index:4;flex-direction:row;overflow-x:auto;padding:8px;border-right:0;border-bottom:1px solid var(--line)}.nav{white-space:nowrap;padding:10px}.nav .ico{width:auto}.side-note{display:none}.main{padding:14px}.hero{padding:22px;min-height:0}.hero-art{display:none}.journeys{grid-template-columns:repeat(2,minmax(0,1fr))}.editor-grid{grid-template-columns:1fr}.rightcol{grid-template-columns:1fr 1fr}.rightcol .panel:first-child{grid-column:1/-1}}
 @media(max-width:460px){.journeys{grid-template-columns:1fr 1fr;gap:8px}.journey{padding:13px 8px;min-height:205px}.journey .emoji{font-size:39px}.journey h3{font-size:14px}.journey p{font-size:12px}.rightcol{grid-template-columns:1fr}.rightcol .panel:first-child{grid-column:auto}.user .username{display:none}.section-title{font-size:22px}}
+
+.chat-shell{background:#fff;border:1px solid #d9e6f7;border-radius:20px;overflow:hidden;box-shadow:0 10px 30px #16345b12;max-width:900px}
+.chat-header{display:flex;align-items:center;gap:12px;padding:16px;background:linear-gradient(120deg,#e9f5ff,#fff0f7);border-bottom:1px solid #e1eaf6}
+.chat-mascot{width:54px;height:54px;display:grid;place-items:center;font-size:32px;background:white;border-radius:18px;box-shadow:0 4px 12px #16345b14}
+.chat-log{height:350px;overflow:auto;padding:18px;display:flex;flex-direction:column;gap:12px;background:#f8fbff}
+.chat-bubble{max-width:85%;padding:12px 15px;border-radius:16px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
+.chat-bubble.bot{align-self:flex-start;background:white;border:1px solid #e0e9f5;border-bottom-left-radius:4px;color:#17365e}
+.chat-bubble.kid{align-self:flex-end;background:#2879e8;color:white;border-bottom-right-radius:4px}
+.chat-compose{display:flex;gap:8px;padding:12px;background:#fff;border-top:1px solid #e0e9f5}.chat-compose input{flex:1;min-width:0;border:1px solid #cbd9ec;border-radius:12px;padding:12px;font:inherit}.chat-compose button{border-radius:12px;padding:10px 16px;background:#2879e8;color:white;font-weight:800}
+.chat-chips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.chat-chips button{border:1px solid #d7e5f8;background:#edf6ff;color:#22568a;padding:8px 12px;border-radius:99px;font-weight:700}
+.chat-disclaimer{font-size:13px;color:#526b89;margin-top:10px}
+
 </style>
 </head>
 <body>
@@ -35,6 +47,7 @@
   <button class="nav" data-page="practice" onclick="showPage('practice',this)"><span class="ico">‹/›</span> Practice</button>
   <button class="nav" data-page="workspace" onclick="showPage('workspace',this)"><span class="ico">🧰</span> Code Studio</button>
   <button class="nav" data-page="terminal" onclick="showPage('terminal',this)"><span class="ico">⌨️</span> Terminal</button>
+  <button class="nav" data-page="buddy" onclick="showPage('buddy',this)"><span class="ico">🤖</span> Codey Chatbot</button>
   <button class="nav" data-page="projects" onclick="showPage('projects',this)"><span class="ico">📁</span> Projects</button>
   <button class="nav" data-page="games" onclick="showPage('games',this)"><span class="ico">🎮</span> Games</button>
   <button class="nav" data-page="achievements" onclick="showPage('achievements',this)"><span class="ico">🏆</span> Achievements</button>
@@ -126,6 +139,19 @@ This is a simulated terminal designed for safe learning.</div>
   </div>
   <div class="panel"><h2>🧠 Gifted coder missions</h2><p>1. Navigate: <code>pwd</code>, <code>ls</code>, <code>cd projects</code>, <code>cd ..</code>.</p><p>2. Create a folder and file: <code>mkdir mission</code>, <code>cd mission</code>, <code>touch plan.txt</code>.</p><p>3. Write and read: <code>echo "Build a robot" &gt; plan.txt</code>, <code>cat plan.txt</code>.</p><p>4. Search and inspect: <code>grep robot plan.txt</code>, <code>wc plan.txt</code>, <code>tree</code>.</p><p>5. Use <code>help</code> for the full supported command list. This is a teaching simulator, not a complete Windows/Linux shell.</p><button class="primary" onclick="showPage('practice')">Open coding playground →</button></div>
 </section>
+
+<section class="page" id="page-buddy">
+  <h1 class="section-title" style="margin-top:0">Meet Codey 🤖 — your silly study buddy!</h1>
+  <p>Ask Codey about coding, Python, websites, terminal commands, or maths. Codey explains things in kid-friendly language and adds a little silliness.</p>
+  <div class="chat-shell">
+    <div class="chat-header"><div class="chat-mascot">🤖</div><div><h2 style="margin:0">Codey the CodeBot</h2><div style="color:#526b89;font-size:13px">Chief Giggle Engineer · Ready to help!</div></div><div style="margin-left:auto;font-size:25px">✨</div></div>
+    <div class="chat-log" id="chatLog" role="log" aria-live="polite"><div class="chat-bubble bot">Beep boop! 🤖 I'm Codey! Ask me a coding or maths question. I promise at least one imaginary robot wiggle per answer. Try: “What is a variable?” or “What is 12 × 8?”</div></div>
+    <div class="chat-chips"><button type="button" onclick="chatQuick('Explain variables like I am 8')">📦 Variables</button><button type="button" onclick="chatQuick('What is 12 times 8?')">🔢 Maths</button><button type="button" onclick="chatQuick('What does cd do in a terminal?')">⌨️ Terminal</button><button type="button" onclick="chatQuick('What are HTML and CSS?')">🌐 Websites</button><button type="button" onclick="chatQuick('Tell me a coding joke')">😂 Joke</button></div>
+    <form class="chat-compose" onsubmit="sendChat(event)"><input id="chatInput" maxlength="500" autocomplete="off" placeholder="Ask Codey a question…" aria-label="Ask Codey a question"><button type="submit">Ask Codey ↗</button></form>
+  </div>
+  <p class="chat-disclaimer">Kid-safety tip: never type your password, home address, phone number, or other private information into a chatbot. This starter version answers with built-in learning explanations; it is not connected to a live AI service, so it may not understand every question.</p>
+</section>
+
 <section class="page" id="page-projects">
 <h1 class="section-title" style="margin-top:0">Project Workshop 🛠️</h1><p>Build something that feels like you. Choose a project to get a starter idea.</p>
 <div class="project-grid">
@@ -323,6 +349,31 @@ function resetWorkspace(){if(!confirm('Reset your Code Studio files to the start
 function downloadWorkspace(){if(wsMode==='web')wsFiles[wsActiveFile]=document.getElementById('wsCode').value;const files=Object.keys(wsFiles);files.forEach(name=>{const blob=new Blob([wsFiles[name]],{type:'text/plain'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);});toast('Downloading project files one by one.');}
 function setWorkspaceMode(mode){wsMode=mode;document.getElementById('wsWebEditor').style.display=mode==='web'?'block':'none';document.getElementById('wsPythonEditor').style.display=mode==='python'?'block':'none';document.getElementById('wsTabWeb').classList.toggle('active',mode==='web');document.getElementById('wsTabPython').classList.toggle('active',mode==='python');if(mode==='web')selectWorkspaceFile(wsActiveFile);}
 function runPython(){const code=document.getElementById('wsPythonCode').value;const out=document.getElementById('wsPythonOutput');out.textContent='Starting secure browser Python runtime… first load may take a little time.';if(!pyWorker){const workerCode=`let pyodide=null;self.onmessage=async(e)=>{const m=e.data;try{if(m.type==='init'){importScripts('https://cdn.jsdelivr.net/pyodide/v0.27.7/full/pyodide.js');pyodide=await loadPyodide();self.postMessage({type:'ready'});return;}if(m.type==='run'){if(!pyodide)throw Error('Python runtime is not ready.');let output='';pyodide.setStdout({batched:(s)=>{output+=s+'\n';}});pyodide.setStderr({batched:(s)=>{output+='⚠ '+s+'\n';}});await pyodide.runPythonAsync(m.code);self.postMessage({type:'output',id:m.id,text:output||'(Program finished without printing output.)'});}}catch(err){self.postMessage({type:m.type==='init'?'initerror':'output',id:m.id,text:String(err)});}};`;pyWorker=new Worker(URL.createObjectURL(new Blob([workerCode],{type:'text/javascript'})));pyWorker.onmessage=(e)=>{const m=e.data;if(m.type==='ready'){pyWorkerReady=true;out.textContent='Python is ready. Running your program…';pyWorker.postMessage({type:'run',id:pyRunId,code:document.getElementById('wsPythonCode').value});}else if(m.type==='output'||m.type==='initerror'){out.textContent=m.text;if(m.type==='initerror'){pyWorker.terminate();pyWorker=null;pyWorkerReady=false;}}};pyWorker.onerror=()=>{out.textContent='Could not start Python. Check your internet connection and try again.';pyWorker?.terminate();pyWorker=null;pyWorkerReady=false;};pyWorker.postMessage({type:'init'});pyRunId++;return;}if(pyWorkerReady){pyRunId++;pyWorker.postMessage({type:'run',id:pyRunId,code});}else out.textContent='Python is still loading. Try again in a moment.';}
+
+
+// Codey is an offline, rule-based learning helper. No private chat data is sent to a server.
+function addChatBubble(text,who){const log=document.getElementById('chatLog');const b=document.createElement('div');b.className='chat-bubble '+who;b.textContent=text;log.appendChild(b);log.scrollTop=log.scrollHeight;}
+function chatQuick(q){document.getElementById('chatInput').value=q;document.getElementById('chatInput').focus();}
+function safeMathAnswer(q){const m=q.match(/(?:what is |calculate |solve )?(-?\d+(?:\.\d+)?)\s*([+*×x]|\/|minus|plus|times|divided by|-)\s*(-?\d+(?:\.\d+)?)/i);if(!m)return null;const a=Number(m[1]),op=m[2].toLowerCase(),b=Number(m[3]);let result;if(op==='+'||op==='plus')result=a+b;else if(op==='-'||op==='minus')result=a-b;else if(['*','×','x','times'].includes(op))result=a*b;else if(op==='/'||op==='divided by')result=b===0?null:a/b;if(result===null||!Number.isFinite(result))return 'Oops-a-doodle! 🤖 I cannot divide by zero. Maths rules say no teleporting through zero!';return `${a} ${op} ${b} = ${Number(result.toFixed(8))}. 🧠 Tip: ${(['*','×','x','times'].includes(op))?'Multiplication is repeated addition.':(['/','divided by'].includes(op))?'Division splits a number into equal groups.':(['-','minus'].includes(op))?'Subtraction tells you how much is left.':'Addition combines amounts.'} Beep boop!`;}
+function codeyAnswer(raw){const q=raw.toLowerCase().trim();const math=safeMathAnswer(q);if(math)return math;
+if(/(hi|hello|hey|good morning)/.test(q))return 'Hiiii, human friend! 👋 My circuits are wearing party hats. What coding or maths mystery shall we solve?';
+if(/joke|funny|laugh/.test(q))return 'Why did the computer go to the doctor? 🤒 It had a virus! The doctor prescribed 2 gigabytes of rest and a cookie. 🍪';
+if(/variable/.test(q))return 'A variable is like a labelled lunchbox 📦 that stores information. In Python: score = 10. The name is score and the value inside is 10. You can change it later!';
+if(/(print|output)/.test(q))return 'In Python, print() asks the computer to show something on the screen. Example: print("Hello!") 🗣️ The computer says hello without needing a mouth!';
+if(/loop|repeat|for each|while/.test(q))return 'A loop repeats instructions so you do not have to write them again and again. 🔁 Example: for i in range(3): print("Yay!") prints Yay! three times. Loops are robot dance moves!';
+if(/function/.test(q))return 'A function is a reusable mini-recipe 🧁. In Python: def wave(): then indent print("Hello!"). Call it with wave(). One recipe, many waves!';
+if(/python/.test(q))return 'Python is a programming language with readable instructions. 🐍 Try print("Hello, CodeKids!") to make it display a greeting. It is not a snake… although the logo is!';
+if(/html|css|javascript|web page|website/.test(q))return 'Website team-up time! 🌐 HTML gives a page its structure, CSS makes it look fabulous, and JavaScript adds interactions. Like a house: HTML is the frame, CSS is the paint, JavaScript is the doorbell!';
+if(/(cd|pwd|ls|mkdir|touch|terminal|command line|shell)/.test(q))return 'Terminal explorer mode! ⌨️ cd changes folders, pwd shows your current folder, ls lists files, mkdir makes a folder, and touch can create a file on many Linux/macOS terminals. Our CodeKids terminal is a safe simulator, not your real computer.';
+if(/fraction/.test(q))return 'A fraction shows part of a whole 🍕. In 3/4, the bottom number (4) means four equal pieces, and the top number (3) means three of those pieces. If you eat 3 of 4 slices, that is 3/4 of the pizza!';
+if(/multiply|multiplication|times table/.test(q))return 'Multiplication is repeated addition! ✨ For example, 4 × 3 means 4 groups of 3: 3 + 3 + 3 + 3 = 12. Four robot teams with three robots each makes twelve robots!';
+if(/divide|division/.test(q))return 'Division shares into equal groups. 🍪 If 12 cookies are shared equally by 3 kids, each gets 12 ÷ 3 = 4 cookies. Codey requests a quality-control cookie too!';
+if(/add|addition|plus|subtract|subtraction|math|mathematics|number/.test(q))return 'Math mission accepted! 🧠 For addition, combine amounts; for subtraction, find what remains; for multiplication, use equal groups; for division, share equally. Ask me a specific sum like “18 + 24” or “7 × 6”.';
+if(/error|bug|debug/.test(q))return 'Bugs in code are mistakes, not actual beetles! 🐞 Debugging means finding and fixing them. Read the error message, check spelling and punctuation, then test one small change at a time. Detective goggles on! 🕵️';
+if(/algorithm/.test(q))return 'An algorithm is a set of steps for solving a problem. 🥪 A sandwich algorithm might be: get bread, add filling, close sandwich, eat (optional but recommended!). Computers follow precise steps too.';
+if(/help|what can you do|topics/.test(q))return 'I can help with beginner Python, variables, print(), loops, functions, HTML/CSS/JavaScript, terminal commands, fractions, and simple arithmetic. 🤖 Try asking one specific question. My brain is a starter set of robot gears, not a live all-knowing AI yet!';
+return 'Hmm… my tiny robot gears are spinning! ⚙️ I do not know that one yet. Try asking about Python, variables, loops, HTML, CSS, terminal commands, fractions, or a maths sum like “12 × 8”. I will keep learning new built-in explanations as CodeKids grows!';}
+function sendChat(e){e.preventDefault();const input=document.getElementById('chatInput');const q=input.value.trim();if(!q)return;addChatBubble(q,'kid');input.value='';addChatBubble(codeyAnswer(q),'bot');}
 
 updateStats();
 renderStageCards();
