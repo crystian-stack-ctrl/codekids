@@ -66,14 +66,14 @@ Keep learning! You can do it!</pre></div>
 </section>
 
 <section class="page" id="page-learn">
-<h1 class="section-title" style="margin-top:0">Your Learning Path 🚀</h1><p>Small steps add up to big ideas. Pick a lesson and start exploring.</p>
+<h1 class="section-title" style="margin-top:0">Your Learning Path 🚀</h1><p>Complete each stage to unlock the next one. Your progress is saved in this browser, so you can come back and continue anytime.</p><div class="panel" style="margin:14px 0"><b id="pathSummary">Stage 1 of 6 · Ready to begin!</b><div class="progressbar"><div class="progressfill" id="pathProgressFill"></div></div><p id="pathHint">Answer the question at the end of each lesson to unlock Continue.</p></div>
 <div class="lesson-list">
-<article class="lesson-card"><div class="emoji">🐍</div><h3>1. Meet Python</h3><p>Learn what code is and write your first line.</p><div class="small">5 min · Beginner</div><button class="primary" onclick="startLesson('python')">Start lesson</button></article>
-<article class="lesson-card"><div class="emoji">💬</div><h3>2. Talking with print()</h3><p>Make your computer say anything you imagine.</p><div class="small">5 min · Beginner</div><button class="primary" onclick="startLesson('print')">Start lesson</button></article>
-<article class="lesson-card"><div class="emoji">📦</div><h3>3. Name your variables</h3><p>Store words and numbers in little memory boxes.</p><div class="small">8 min · Beginner</div><button class="primary" onclick="startLesson('variables')">Start lesson</button></article>
-<article class="lesson-card"><div class="emoji">🔁</div><h3>4. Repeat with loops</h3><p>Let your code do the same thing again and again.</p><div class="small">8 min · Beginner</div><button class="primary" onclick="startLesson('loops')">Start lesson</button></article>
-<article class="lesson-card"><div class="emoji">🌐</div><h3>5. Build a web page</h3><p>Meet HTML and make a tiny page of your own.</p><div class="small">10 min · Beginner</div><button class="primary" onclick="startLesson('web')">Start lesson</button></article>
-<article class="lesson-card"><div class="emoji">📖</div><h3>6. Create a story</h3><p>Use a few instructions to tell a silly story.</p><div class="small">7 min · Beginner</div><button class="primary" onclick="startLesson('story')">Start lesson</button></article>
+<article class="lesson-card" data-stage="python"><div class="emoji">🐍</div><h3>Stage 1 · Meet Python</h3><p class="stage-status" id="status-python">Your first step</p><p>Learn what code is and write your first line.</p><div class="small">5 min · Beginner</div><button class="primary stage-button" id="button-python" onclick="startLesson('python')">Start lesson</button></article>
+<article class="lesson-card" data-stage="print"><div class="emoji">💬</div><h3>Stage 2 · Talking with print()</h3><p class="stage-status" id="status-print">Locked — finish Stage 1</p><p>Make your computer say anything you imagine.</p><div class="small">5 min · Beginner</div><button class="primary stage-button" id="button-print" onclick="startLesson('print')">Start lesson</button></article>
+<article class="lesson-card" data-stage="variables"><div class="emoji">📦</div><h3>Stage 3 · Name your variables</h3><p class="stage-status" id="status-variables">Locked — finish Stage 2</p><p>Store words and numbers in little memory boxes.</p><div class="small">8 min · Beginner</div><button class="primary stage-button" id="button-variables" onclick="startLesson('variables')">Start lesson</button></article>
+<article class="lesson-card" data-stage="loops"><div class="emoji">🔁</div><h3>Stage 4 · Repeat with loops</h3><p class="stage-status" id="status-loops">Locked — finish Stage 3</p><p>Let your code do the same thing again and again.</p><div class="small">8 min · Beginner</div><button class="primary stage-button" id="button-loops" onclick="startLesson('loops')">Start lesson</button></article>
+<article class="lesson-card" data-stage="web"><div class="emoji">🌐</div><h3>Stage 5 · Build a web page</h3><p class="stage-status" id="status-web">Locked — finish Stage 4</p><p>Meet HTML and make a tiny page of your own.</p><div class="small">10 min · Beginner</div><button class="primary stage-button" id="button-web" onclick="startLesson('web')">Start lesson</button></article>
+<article class="lesson-card" data-stage="story"><div class="emoji">📖</div><h3>Stage 6 · Create a story</h3><p class="stage-status" id="status-story">Locked — finish Stage 5</p><p>Use a few instructions to tell a silly story.</p><div class="small">7 min · Beginner</div><button class="primary stage-button" id="button-story" onclick="startLesson('story')">Start lesson</button></article>
 </div>
 <div id="lessonArea" style="margin-top:18px"></div>
 </section>
@@ -126,20 +126,68 @@ I can learn anything.</pre></div></div></div>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
-const defaultState={name:'Alex',lessons:3,badges:1,ran:false,project:false,done:[]};
+const defaultState={name:'Alex',lessons:0,badges:0,ran:false,project:false,done:[]};
 let state;
 try{state=Object.assign({},defaultState,JSON.parse(localStorage.getItem('codekids-state')||'{}'))}catch(e){state={...defaultState}}
+if(!Array.isArray(state.done)) state.done=[];
+if(state.done.filter(x=>['python','print','variables','loops','web','story'].includes(x)).length===0){state.lessons=0;state.badges=0;}
 function persist(){localStorage.setItem('codekids-state',JSON.stringify(state));updateStats()}
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.style.display='none',2600)}
 function showPage(page,btn){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));const target=document.getElementById('page-'+page);if(target)target.classList.add('active');document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n.dataset.page===page));if(btn&&btn.dataset.page)btn.classList.add('active');window.scrollTo({top:0,behavior:'smooth'})}
-function updateStats(){document.getElementById('userName').textContent=state.name;document.getElementById('nameInput').value=state.name;document.getElementById('profileNameHeading').textContent=state.name;document.getElementById('progressText').textContent=Math.min(state.lessons,10)+' / 10';document.getElementById('progressFill').style.width=Math.min(state.lessons,10)*10+'%';document.getElementById('badgeText').textContent=state.badges;document.getElementById('levelText').textContent='Level '+(Math.floor(state.lessons/3)+1);document.getElementById('wordBadge').textContent=state.lessons>3?'Unlocked! 🎉':'Keep learning to unlock';document.getElementById('experimentBadge').textContent=state.ran?'Unlocked! 🎉':'Keep learning to unlock';document.getElementById('projectBadge').textContent=state.project?'Unlocked! 🎉':'Keep learning to unlock'}
+function updateStats(){document.getElementById('userName').textContent=state.name;document.getElementById('nameInput').value=state.name;document.getElementById('profileNameHeading').textContent=state.name;state.lessons=stageOrder.filter(k=>state.done.includes(k)).length;document.getElementById('progressText').textContent=state.lessons+' / '+stageOrder.length;document.getElementById('progressFill').style.width=(state.lessons/stageOrder.length*100)+'%';document.getElementById('badgeText').textContent=state.badges;document.getElementById('levelText').textContent='Level '+(Math.floor(state.lessons/3)+1);document.getElementById('wordBadge').textContent=state.lessons>3?'Unlocked! 🎉':'Keep learning to unlock';document.getElementById('experimentBadge').textContent=state.ran?'Unlocked! 🎉':'Keep learning to unlock';document.getElementById('projectBadge').textContent=state.project?'Unlocked! 🎉':'Keep learning to unlock'}
 function saveName(){const n=document.getElementById('nameInput').value.trim().slice(0,20);if(!n){toast('Please enter a nickname first.');return}state.name=n;persist();toast('Nice to meet you, '+n+'!')}
 function runCode(){const source=document.getElementById('codeInput2')?.closest('.page.active')?document.getElementById('codeInput2'):document.getElementById('codeInput');const output=source.id==='codeInput2'?document.getElementById('codeOutput2'):document.getElementById('codeOutput');const lines=source.value.split(/\n/);let vars={},outs=[];try{for(let raw of lines){let line=raw.trim();if(!line||line.startsWith('#'))continue;let m=line.match(/^([A-Za-z_]\w*)\s*=\s*(.+)$/);if(m){let val=m[2].trim();if((val.startsWith('"')&&val.endsWith('"'))||(val.startsWith("'")&&val.endsWith("'")))vars[m[1]]=val.slice(1,-1);else if(!isNaN(Number(val)))vars[m[1]]=Number(val);else throw Error('Try putting words in quotation marks, like name = "Coder".');continue}m=line.match(/^print\((.*)\)$/);if(m){let expr=m[1].trim();let pieces=expr.split(/\s*\+\s*/);let value=pieces.map(p=>{p=p.trim();if((p.startsWith('"')&&p.endsWith('"'))||(p.startsWith("'")&&p.endsWith("'")))return p.slice(1,-1);if(Object.prototype.hasOwnProperty.call(vars,p))return vars[p];if(!isNaN(Number(p)))return Number(p);throw Error('Check this part: '+p)}).join('');outs.push(String(value));continue}throw Error('Try a simple variable or print("Hello!"). This playground supports beginner print() examples.')}output.textContent=outs.join('\n')||'(Your program ran, but did not print anything.)';state.ran=true;if(!state.done.includes('run')){state.done.push('run');state.badges=Math.max(state.badges,2)}persist();toast('Great experimenting!')}catch(e){output.textContent='Let’s fix it together 💛\n'+e.message}}
 function copyOutput(){const txt=document.getElementById('codeOutput').textContent;navigator.clipboard?.writeText(txt).then(()=>toast('Output copied!')).catch(()=>toast('Select the output text to copy it.'))}
 const lessons={python:{title:'Meet Python 🐍',body:'Python is a programming language: a way to give a computer clear instructions.',code:'print("Hello, world!")',question:'What does print("Hello!") do?',answers:['Shows the words Hello!','Turns off the computer','Draws a cat'],correct:0,why:'Exactly! print() displays information on the screen.'},print:{title:'Talking with print() 💬',body:'The print() instruction shows words or numbers. Put text inside quotation marks.',code:'print("Coding is fun!")',question:'Which line displays Hi there!?',answers:['say("Hi there!")','print("Hi there!")','show Hi there!'],correct:1,why:'You got it! The print() instruction displays the text.'},variables:{title:'Name your variables 📦',body:'A variable is a named box that stores information for your program to use later.',code:'favorite = "pizza"\\nprint(favorite)',question:'What is a variable like?',answers:['A named box for information','A computer screen','A type of mouse'],correct:0,why:'Right! Variables give information a name so you can use it again.'},loops:{title:'Repeat with loops 🔁',body:'Loops help you repeat instructions without writing the same line over and over.',code:'for i in range(3):\\n    print("Yay!")',question:'Why are loops useful?',answers:['They repeat instructions','They clean your keyboard','They change the screen color automatically'],correct:0,why:'Correct! Loops are a handy way to repeat steps.'},web:{title:'Build a web page 🌐',body:'HTML uses tags to describe things on a webpage, like headings and paragraphs.',code:'<h1>Hello, web!</h1>\\n<p>My first page.</p>',question:'What is HTML mainly used for?',answers:['Structuring web pages','Cooking lunch','Charging a laptop'],correct:0,why:'Exactly! HTML gives web page content its structure.'},story:{title:'Create a story 📖',body:'Programs follow instructions in order. You can combine messages to tell a tiny story.',code:'print("Once upon a time...")\\nprint("A robot learned to dance!")',question:'What does a computer need to follow your story?',answers:['Clear instructions','A bedtime snack','A magic wand'],correct:0,why:'That’s it! Code is a set of instructions.'}};
-function startLesson(key){const l=lessons[key]||lessons.python;showPage('learn');const area=document.getElementById('lessonArea');area.innerHTML=`<div class="lesson-content"><h2>${l.title}</h2><p>${l.body}</p><div class="concept"><b>Try this:</b><pre style="white-space:pre-wrap;font-family:ui-monospace,monospace">${l.code.replace(/</g,'&lt;')}</pre><button class="linkbtn" onclick="loadLessonCode('${key}')">Try this in the playground →</button></div><h3>${l.question}</h3>${l.answers.map((a,i)=>`<button class="quiz-option" onclick="answerQuiz('${key}',${i})">${String.fromCharCode(65+i)}. ${a}</button>`).join('')}<div class="feedback" id="quizFeedback"></div></div>`;area.scrollIntoView({behavior:'smooth',block:'start'})}
+const stageOrder=['python','print','variables','loops','web','story'];
+function nextStageKey(key){const i=stageOrder.indexOf(key);return i>=0&&i<stageOrder.length-1?stageOrder[i+1]:null}
+function firstUnfinishedStage(){return stageOrder.find(k=>!state.done.includes(k))||null}
+function canOpenStage(key){const i=stageOrder.indexOf(key);return i>=0&&stageOrder.slice(0,i).every(k=>state.done.includes(k))}
+function refreshLearningPath(){
+  const complete=stageOrder.filter(k=>state.done.includes(k)).length;
+  const next=firstUnfinishedStage();
+  const summary=document.getElementById('pathSummary');
+  if(summary)summary.textContent=next?`Stage ${stageOrder.indexOf(next)+1} of ${stageOrder.length} · ${complete} completed`:'🎉 All 6 stages complete! You are a CodeKids star!';
+  const fill=document.getElementById('pathProgressFill');if(fill)fill.style.width=(complete/stageOrder.length*100)+'%';
+  const hint=document.getElementById('pathHint');if(hint)hint.textContent=next?'Finish the current stage correctly to unlock the next one. Completed lessons stay available for review.':'Amazing work! You have finished the whole beginner learning path. Revisit any stage to practise again.';
+  stageOrder.forEach((key,i)=>{
+    const status=document.getElementById('status-'+key),button=document.getElementById('button-'+key);
+    if(!status||!button)return;
+    const done=state.done.includes(key),unlocked=canOpenStage(key);
+    status.textContent=done?'✅ Completed — available to review':unlocked?'🔓 Unlocked — ready when you are':`🔒 Locked — finish Stage ${i} first`;
+    button.disabled=!unlocked;button.style.opacity=unlocked?'1':'.55';button.textContent=done?'Review lesson':unlocked?'Start lesson':'Locked';
+  });
+}
+function startLesson(key){
+ const l=lessons[key]||lessons.python;
+ if(!canOpenStage(key)){toast('Complete the earlier stage first. You can do it!');return}
+ showPage('learn');
+ const area=document.getElementById('lessonArea');
+ const alreadyDone=state.done.includes(key);
+ area.innerHTML=`<div class="lesson-content"><p class="small">STAGE ${stageOrder.indexOf(key)+1} OF ${stageOrder.length}${alreadyDone?' · REVIEW MODE':''}</p><h2>${l.title}</h2><p>${l.body}</p><div class="concept"><b>Try this:</b><pre style="white-space:pre-wrap;font-family:ui-monospace,monospace">${l.code.replace(/</g,'&lt;')}</pre><button class="linkbtn" onclick="loadLessonCode('${key}')">Try this in the playground →</button></div><h3>${l.question}</h3>${l.answers.map((a,i)=>`<button class="quiz-option" onclick="answerQuiz('${key}',${i})">${String.fromCharCode(65+i)}. ${a}</button>`).join('')}<div class="feedback" id="quizFeedback"></div><div id="lessonContinue" style="margin-top:16px"></div></div>`;
+ if(alreadyDone){document.getElementById('quizFeedback').textContent='You have already completed this stage. Answer again to practise, or continue to the next stage.';addContinueButton(key)}
+ area.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function addContinueButton(key){
+ const box=document.getElementById('lessonContinue');if(!box)return;
+ const next=nextStageKey(key);
+ box.innerHTML=next?`<button class="primary" onclick="startLesson('${next}')">Continue to Stage ${stageOrder.indexOf(next)+1} →</button>`:`<button class="primary" onclick="showPage('achievements')">Finish learning path 🏆</button>`;
+}
 function loadLessonCode(key){const l=lessons[key];showPage('practice');document.getElementById('codeInput2').value=l.code;toast('Starter code loaded. Press Run when ready!')}
-function answerQuiz(key,i){const l=lessons[key],fb=document.getElementById('quizFeedback');if(i===l.correct){fb.textContent='🎉 '+l.why;if(!state.done.includes(key)){state.done.push(key);state.lessons=Math.min(10,state.lessons+1);state.badges=Math.max(2,state.badges);persist()}toast('Lesson complete! You earned a little progress.')}else{fb.textContent='Almost! Give it another try. You can do it!';fb.style.color='#b45a00'}}
+function answerQuiz(key,i){
+ const l=lessons[key],fb=document.getElementById('quizFeedback');
+ if(i===l.correct){
+   fb.textContent='🎉 '+l.why;fb.style.color='#16804a';
+   if(!state.done.includes(key)){
+     state.done.push(key);
+     state.lessons=stageOrder.filter(k=>state.done.includes(k)).length;
+     state.badges=Math.max(state.badges,Math.min(7,1+state.lessons));
+     persist();
+   }
+   refreshLearningPath();addContinueButton(key);
+   toast(state.done.filter(k=>stageOrder.includes(k)).length>=stageOrder.length?'Amazing! You completed every stage!':'Stage complete! Press Continue for your next lesson.');
+ }else{fb.textContent='Almost! Give it another try. You can do it!';fb.style.color='#b45a00'}
+}
 function openProject(name){showPage('projects');state.project=true;state.badges=Math.max(3,state.badges);persist();document.getElementById('projectArea').innerHTML=`<div class="lesson-content"><h2>✨ ${name}</h2><p>Project plan: choose a goal, break it into small steps, build one part, then test and improve it.</p><label for="projectIdea"><b>Your idea notes</b></label><textarea id="projectIdea" rows="4" style="width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;margin-top:8px" placeholder="What will your project do? What will you add first?"></textarea><button class="primary" style="margin-top:10px" onclick="saveIdea()">Save my idea</button><div class="small" id="ideaSaved" style="margin-top:8px"></div></div>`;document.getElementById('projectArea').scrollIntoView({behavior:'smooth'})}
 function saveIdea(){const val=document.getElementById('projectIdea').value;localStorage.setItem('codekids-project-idea',val);document.getElementById('ideaSaved').textContent='Idea saved on this device. Keep building! 🌟';toast('Your project idea is saved.')}
 let secret=4,guessCount=0;function newGuessGame(){secret=Math.floor(Math.random()*10)+1;guessCount=0;document.getElementById('guessGame').innerHTML='<label for="guessNum">Pick 1–10: </label><input id="guessNum" type="number" min="1" max="10" style="width:70px;padding:8px;border:1px solid var(--line);border-radius:8px"><button class="primary" onclick="checkGuess()">Guess!</button><div id="guessFeedback" class="feedback"></div>'}
@@ -150,6 +198,7 @@ function rps(choice){const opts=['Rock','Paper','Scissors'],comp=opts[Math.floor
 function setChallenge(){showPage('practice');document.getElementById('codeInput2').value='print("Alex")\\nprint("Alex")\\nprint("Alex")\\nprint("Alex")\\nprint("Alex")'.replaceAll('Alex',state.name);toast('Starter challenge loaded. Try it!')}
 function resetProgress(){if(confirm('Reset your CodeKids demo progress on this device?')){localStorage.removeItem('codekids-state');state={...defaultState};persist();toast('Demo progress reset.')}}
 updateStats();
+refreshLearningPath();
 </script>
 </body>
 </html>

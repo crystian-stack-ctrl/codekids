@@ -1,17 +1,21 @@
-# CodeKids learning platform demo
+# CodeKids — staged learning version
 
-## Run it
-1. Unzip the folder.
-2. Open `index.html` in a modern browser (Chrome, Edge, Firefox, Safari).
-3. No installation, server, or account is required.
+## Launch locally
+Open `index.html` in a modern browser.
 
-## Features
-- Responsive dashboard with learning paths and progress
-- Six beginner lessons with multiple-choice checks
-- Browser-based beginner Python print/variable playground
-- Project idea planner
-- Number guessing, memory, and rock-paper-scissors games
-- Nickname and progress saved locally in the browser
+## Publish on GitHub Pages
+1. Open your repository: https://github.com/crystian-stack-ctrl/codekids
+2. Choose Add file → Upload files.
+3. Upload this version's `index.html` and `README.md` to the repository root.
+4. Commit the changes to `main`.
+5. GitHub Pages should redeploy automatically if it is already configured.
 
-## Important
-This is a self-contained front-end demo. The playground intentionally supports a small beginner-friendly subset of Python-like `print()` and variable examples; it does not execute arbitrary Python. It has no backend, sign-in, cloud sync, analytics, or data collection. For a real public service for children, add adult/guardian consent where required, privacy and security review, accessibility testing, and a secure backend before collecting any personal data.
+## New learning progression
+- Six ordered learning stages.
+- Later stages stay locked until the learner answers the current stage correctly.
+- Correct answers unlock a Continue button that opens the next stage.
+- Completed stages remain available for review.
+- Stage completion and progress are saved in the browser's local storage.
+
+## Notes
+This remains a front-end demo. Progress is stored in the current browser/device and does not sync between devices or student accounts.
